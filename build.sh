@@ -1,15 +1,25 @@
 
 #!/usr/bin/env bash
-set -e
+set -euo pipefail
 
-apt-get update
-apt-get install -y curl git unzip xz-utils zip
+echo "=== Installation du SDK Flutter ==="
 
-git clone https://github.com/tsyferana/testde.git \
-  --depth 1 --branch stable /tmp/flutter
+git clone --depth 1 --branch stable \
+  https://github.com/flutter/flutter.git /tmp/flutter
 
 export PATH="/tmp/flutter/bin:$PATH"
+export CI=true
 
+echo "=== Version de Flutter ==="
 flutter --version
+
+echo "=== Installation des dépendances ==="
 flutter pub get
+
+echo "=== Compilation Web ==="
 flutter build web --release
+
+echo "=== Vérification du résultat ==="
+test -f build/web/index.html
+
+echo "=== Compilation terminée ==="
